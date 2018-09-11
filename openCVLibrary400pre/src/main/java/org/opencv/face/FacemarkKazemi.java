@@ -1,0 +1,29 @@
+//
+// This file is auto-generated. Please don't modify it!
+//
+package org.opencv.face;
+
+
+// C++: class FacemarkKazemi
+//javadoc: FacemarkKazemi
+
+public class FacemarkKazemi extends Facemark {
+
+    protected FacemarkKazemi(long addr) {
+        super(addr);
+    }
+
+    // internal usage only
+    public static FacemarkKazemi __fromPtr__(long addr) {
+        return new FacemarkKazemi(addr);
+    }
+
+    // native support for java finalize()
+    private static native void delete(long nativeObj);
+
+    @Override
+    protected void finalize() throws Throwable {
+        delete(nativeObj);
+    }
+
+}

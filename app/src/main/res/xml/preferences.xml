@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!--<SwitchPreference-->
+    <!--android:defaultValue="@bool/pref_default_show_camera_preview"-->
+    <!--android:key="@string/pref_key_show_camera_preview"-->
+    <!--android:summaryOff="@string/pref_summaryOff_show_camera_preview"-->
+    <!--android:summaryOn="@string/pref_summaryOn_show_camera_preview"-->
+    <!--android:title="@string/pref_title_show_camera_preview" />-->
+    <!--<SwitchPreference-->
+    <!--android:defaultValue="@bool/pref_default_show_vehicle_count"-->
+    <!--android:key="@string/pref_key_show_vehicle_count"-->
+    <!--android:summaryOff="@string/pref_summaryOff_show_vehicle_count"-->
+    <!--android:summaryOn="@string/pref_summaryOn_show_vehicle_count"-->
+    <!--android:title="@string/pref_title_show_vehicle_count" />-->
+
+    <ListPreference
+        android:defaultValue="@string/pref_default_camera_selection"
+        android:dialogIcon="@android:drawable/ic_menu_camera"
+        android:entries="@array/cameras"
+        android:entryValues="@array/cameras_ids"
+        android:key="@string/pref_key_camera_selection"
+        android:summary="%s"
+        android:title="@string/pref_title_camera_selection" />
+
+    <!--<EditTextPreference-->
+    <!--android:defaultValue="@string/pref_default_street_label"-->
+    <!--android:key="@string/pref_key_street_label"-->
+    <!--android:selectAllOnFocus="true"-->
+    <!--android:singleLine="true"-->
+    <!--android:title="@string/pref_title_road_name" />-->
+
+    <!--<EditTextPreference-->
+    <!--android:defaultValue="@string/pref_default_zone1_name"-->
+    <!--android:key="@string/pref_key_zone1_label"-->
+    <!--android:selectAllOnFocus="true"-->
+    <!--android:singleLine="true"-->
+    <!--android:title="@string/pref_title_zone1_name" />-->
+
+    <!--<EditTextPreference-->
+    <!--android:defaultValue="@string/pref_default_zone2_name"-->
+    <!--android:key="@string/pref_key_zone2_label"-->
+    <!--android:selectAllOnFocus="true"-->
+    <!--android:singleLine="true"-->
+    <!--android:title="@string/pref_title_zone2_name" />-->
+
+
+</PreferenceScreen>

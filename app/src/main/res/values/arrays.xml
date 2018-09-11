@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="cameras">
+        <item>@string/arrays_cameras_video_mode</item>
+        <item>@string/arrays_cameras_default_camera</item>
+    </string-array>
+    <string-array name="cameras_ids">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+</resources>
