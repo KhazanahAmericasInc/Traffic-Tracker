@@ -8,10 +8,14 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Surface;
 import android.view.SurfaceView;
 import android.widget.Toast;
 
+import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
+import org.opencv.android.JavaCameraView;
+import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
@@ -20,16 +24,34 @@ public class CameraActivity extends AppCompatActivity implements CustomCameraVie
     public static final int CAMERA_PERMISSION_REQUEST = 1;
     private static final String TAG = CameraActivity.class.getSimpleName();
 
+    BaseLoaderCallback mLoaderCallBack = new BaseLoaderCallback(this) {
+        @Override
+        public void onManagerConnected(int status) {
+            switch(status){
+                case BaseLoaderCallback.SUCCESS:{
+                    javaCameraView.enableView();
+                    break;
+                }
+                default:{
+                    super.onManagerConnected(status);
+                    break;
+                }
+            }
+        }
+    };
+
+    /*
     static {
         if (!OpenCVLoader.initDebug()) {
             Log.e(TAG, "ERROR. COULD NOT LOAD STATIC OPENCV LIBRARIES!!!");
             //TODO Handler to finish activty
         } else {
+            Log.i(TAG, "Opencv loaded successfully.");
 //            Other OpenCV JNI libs should be here:
 //            System.loadLibrary("my_jni_lib1");
 //            System.loadLibrary("my_jni_lib2");
         }
-    }
+    }*/
 
     private CameraBridgeViewBase mOpenCvCameraView;
     private Mat mRgb;
@@ -41,13 +63,17 @@ public class CameraActivity extends AppCompatActivity implements CustomCameraVie
 
     private KCFTrackerCountingSolution mKCFTrackerCountingSolution;
 
+    JavaCameraView javaCameraView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(TAG, "onCreate");
         super.onCreate(savedInstanceState);
         Log.d(TAG, "ONCREATE*******************************");
-        setContentView(R.layout.activity_camera);
-
+        setContentView(R.layout.cam_activity);
+        javaCameraView = (JavaCameraView) findViewById(R.id.java_camera_view);
+        javaCameraView.setVisibility(SurfaceView.VISIBLE);
+        javaCameraView.setCvCameraViewListener(this);
     }
 
     private boolean permissionsGranted() {
@@ -96,6 +122,13 @@ public class CameraActivity extends AppCompatActivity implements CustomCameraVie
     public void onResume() {
         Log.d(TAG, "onResume");
         super.onResume();
+        if(OpenCVLoader.initDebug()) {
+            Log.i(TAG, "SUCCESS: Opencv load successful.");
+            mLoaderCallBack.onManagerConnected((LoaderCallbackInterface.SUCCESS));
+        }else{
+            Log.i(TAG, "WARNING: Opencv load unsuccessful.");
+            OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_9, this, mLoaderCallBack);
+        }
     }
 
 

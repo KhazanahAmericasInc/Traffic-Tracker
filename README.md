@@ -1,2 +1,6 @@
 # Traffic-Tracker
-Android Application built based off of the idea of Min's Sensor Tower. Created by Melvin.
+Hard-forked from Traffic-Tracker.
+
+# Installation
+
+# Components
