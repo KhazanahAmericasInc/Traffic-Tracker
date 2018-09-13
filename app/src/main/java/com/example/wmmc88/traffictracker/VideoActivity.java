@@ -201,6 +201,7 @@ public class VideoActivity extends AppCompatActivity implements Runnable {
             String lastKnownLocation = locationManager.getLastKnownLocation(locationProvider).toString().substring(0,34) + "]";
             Log.d(TAG, "LOCATION IS NOW: " + lastKnownLocation);
             mKCFTrackerCountingSolution.setCurrLoc(lastKnownLocation);
+            CloudRailsUnifiedCloudStorageAPIUtils.getStaticInstance().setLoc(lastKnownLocation);
 
             // start location listener on time interval
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0,

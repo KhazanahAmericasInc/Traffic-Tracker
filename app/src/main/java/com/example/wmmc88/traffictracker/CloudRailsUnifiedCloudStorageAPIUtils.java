@@ -31,6 +31,8 @@ class CloudRailsUnifiedCloudStorageAPIUtils implements Runnable {
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor editor;
 
+    private String currLoc = "";
+
     public static CloudRailsUnifiedCloudStorageAPIUtils getStaticInstance() {
         return STATIC_INSTANCE;
     }
@@ -135,7 +137,7 @@ class CloudRailsUnifiedCloudStorageAPIUtils implements Runnable {
                             direction = "UNKNOWN";
                             break;
                     }
-                    String fileName = Calendar.getInstance().getTime() + direction + ".jpg";
+                    String fileName = Calendar.getInstance().getTime() + direction + currLoc + ".jpg";
 
                     Bitmap vehicleImage = Bitmap.createBitmap(matToUpload.cols(), matToUpload.rows(), Bitmap.Config.ARGB_8888);
                     Utils.matToBitmap(matToUpload, vehicleImage);
@@ -151,5 +153,9 @@ class CloudRailsUnifiedCloudStorageAPIUtils implements Runnable {
             }
         }
         Log.i(TAG, "CloudRails Upload Thread has finished");
+    }
+
+    public void setLoc(String location){
+        currLoc = location;
     }
 }

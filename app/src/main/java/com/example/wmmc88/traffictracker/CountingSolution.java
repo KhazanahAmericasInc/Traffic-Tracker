@@ -165,9 +165,6 @@ class CountingSolution {
             }
         }
 
-
-        //currLoc = (currLoc == "" ? "Unavailable" : currLoc.substring(0,34) + "]");
-
         Imgproc.putText(previewMat, "Zone 1:"    + Integer.toString(mZone1Count)
                                      + " Zone 2: "   + Integer.toString(mZone2Count) + " Location: " + currLoc,
                 new Point(30, SCREEN_SIZE.height - 30)
@@ -205,10 +202,8 @@ class CountingSolution {
         }
     }
 
-
     public void setCurrLoc(String location){
         currLoc = location;
     }
-    public String getCurrLoc(){ return currLoc; }
 
 }

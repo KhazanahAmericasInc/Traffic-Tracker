@@ -216,6 +216,8 @@ public class CameraActivity extends AppCompatActivity implements CustomCameraVie
             String lastKnownLocation = locationManager.getLastKnownLocation(locationProvider).toString().substring(0,34) + "]";
 
             mKCFTrackerCountingSolution.setCurrLoc(lastKnownLocation);
+            CloudRailsUnifiedCloudStorageAPIUtils.getStaticInstance().setLoc(lastKnownLocation);
+
         }
         frames++;
 
