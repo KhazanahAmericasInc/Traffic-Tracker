@@ -110,9 +110,9 @@ public class VideoActivity extends AppCompatActivity implements Runnable {
                 finish();
             }
         } else {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, EXTERNAL_STORAGE_PERMISSION_REQUEST);
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}
+            , EXTERNAL_STORAGE_PERMISSION_REQUEST);
         }
-
     }
 
     @Override
@@ -175,7 +175,8 @@ public class VideoActivity extends AppCompatActivity implements Runnable {
         locationProvider = LocationManager.GPS_PROVIDER;
 
         // Check location permissions
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED ) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                     Manifest.permission.ACCESS_COARSE_LOCATION)) {
                 //showRationale();
@@ -198,7 +199,6 @@ public class VideoActivity extends AppCompatActivity implements Runnable {
             Imgproc.cvtColor(inputFrame, inputFrame, Imgproc.COLOR_RGB2BGR);
 
             String locationProvider = LocationManager.GPS_PROVIDER;
-            // Or use LocationManager.GPS_PROVIDER
 
             String lastKnownLocation = locationManager.getLastKnownLocation(locationProvider).toString();
             Log.d(TAG, "LOCATION IS NOW: " + lastKnownLocation);
@@ -225,7 +225,9 @@ public class VideoActivity extends AppCompatActivity implements Runnable {
             mVideoSurfaceView.mCurrentLocation = lastKnownLocation;
 
             mVideoSurfaceView.mReceivedFrameCount.incrementAndGet();
-            Log.v(TAG, "Zone1: " + mKCFTrackerCountingSolution.mZone1Count + "\tZone2: " + mKCFTrackerCountingSolution.mZone2Count + "\tCurrent Trackers: " + mKCFTrackerCountingSolution.getNumActiveTrackers());
+            Log.v(TAG, "Zone1: " + mKCFTrackerCountingSolution.mZone1Count + "\tZone2: "
+                    + mKCFTrackerCountingSolution.mZone2Count + "\tCurrent Trackers: "
+                    + mKCFTrackerCountingSolution.getNumActiveTrackers());
         }
         Log.i(TAG, "Processing Thread Finished");
         //TODO use handler finish activity from other thread

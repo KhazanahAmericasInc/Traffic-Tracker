@@ -16,7 +16,6 @@ public class KCFTrackerCountingSolution extends CountingSolution {
 
     private static final int MAX_TRACKER_AGE = 30;//increase from 20
     private List<CustomKCFTracker> trackers = new LinkedList<>();
-    private String currLoc = "";
 
     public KCFTrackerCountingSolution(Size screenSize) {
         super(screenSize);
