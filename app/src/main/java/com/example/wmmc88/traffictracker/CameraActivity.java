@@ -80,7 +80,6 @@ public class CameraActivity extends AppCompatActivity implements CustomCameraVie
         javaCameraView = (JavaCameraView) findViewById(R.id.java_camera_view);
         javaCameraView.setVisibility(SurfaceView.VISIBLE);
         javaCameraView.setCvCameraViewListener(this);
-
         CloudRailsUnifiedCloudStorageAPIUtils.getStaticInstance().startUploadThread();
     }
 
