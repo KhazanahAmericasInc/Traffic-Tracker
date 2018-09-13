@@ -179,15 +179,11 @@ public class VideoActivity extends AppCompatActivity implements Runnable {
                 != PackageManager.PERMISSION_GRANTED ) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                     Manifest.permission.ACCESS_COARSE_LOCATION)) {
-                //showRationale();
             } else {
                 // do request the permission
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 8);
             }
         }
-
-
-
 
 
         Mat inputFrame = new Mat();
@@ -200,8 +196,9 @@ public class VideoActivity extends AppCompatActivity implements Runnable {
 
             String locationProvider = LocationManager.GPS_PROVIDER;
 
-            String lastKnownLocation = locationManager.getLastKnownLocation(locationProvider).toString();
+            String lastKnownLocation = locationManager.getLastKnownLocation(locationProvider).toString().substring(0,34) + "]";
             Log.d(TAG, "LOCATION IS NOW: " + lastKnownLocation);
+            mKCFTrackerCountingSolution.setCurrLoc(lastKnownLocation);
 
             // start location listener on time interval
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0,

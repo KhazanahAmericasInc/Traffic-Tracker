@@ -56,8 +56,6 @@ public class CameraActivity extends AppCompatActivity implements CustomCameraVie
     private int mPreviewFrameHeight;
     private String currLoc;
 
-    // Canvas for HUD
-    private Canvas canvas = null;
 
     // Location Services
     private LocationManager locationManager;
@@ -151,8 +149,6 @@ public class CameraActivity extends AppCompatActivity implements CustomCameraVie
 
         mKCFTrackerCountingSolution = new KCFTrackerCountingSolution(screenSize);
 
-
-        Log.d(TAG, "HELLOOOOOOOOOOOOOOOOOOOOOO");
         // ANDROID LOCATION MANAGER //
 
         // Initialize Location Manager
@@ -182,9 +178,21 @@ public class CameraActivity extends AppCompatActivity implements CustomCameraVie
         // Set location to GPS location instead of service provider (i.e.Google Play location).
         locationProvider = LocationManager.GPS_PROVIDER;
 
+        // Check location permissions
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.ACCESS_COARSE_LOCATION)) {
 
+            } else {
+                // do request the permission
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 8);
+            }
+        }
 
-
+        // start location listener on time interval
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0,
+                0, locationListener);
 
         mRgb = null;
     }
@@ -198,8 +206,6 @@ public class CameraActivity extends AppCompatActivity implements CustomCameraVie
 
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
         Log.v(TAG, "onCameraFrame");
-
-
         mKCFTrackerCountingSolution.process(inputFrame.rgba());
         mRgb = mKCFTrackerCountingSolution.getPreviewMat(true);
 
@@ -209,15 +215,13 @@ public class CameraActivity extends AppCompatActivity implements CustomCameraVie
                     != PackageManager.PERMISSION_GRANTED) {
                 if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                         Manifest.permission.ACCESS_COARSE_LOCATION)) {
-                    //showRationale();
                 } else {
                     // do request the permission
                     ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 8);
                 }
             }
 
-
-            String lastKnownLocation = locationManager.getLastKnownLocation(locationProvider).toString();
+            String lastKnownLocation = locationManager.getLastKnownLocation(locationProvider).toString().substring(0,34) + "]";
 
             mKCFTrackerCountingSolution.setCurrLoc(lastKnownLocation);
         }
