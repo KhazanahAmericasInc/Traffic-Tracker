@@ -61,9 +61,6 @@ public class CameraActivity extends AppCompatActivity implements CustomCameraVie
     private LocationManager locationManager;
     private LocationListener locationListener;
     private String locationProvider;
-    private String mCurrentLocation = "";
-
-    private Paint mTextPaint;
 
 
     private KCFTrackerCountingSolution mKCFTrackerCountingSolution;
@@ -84,12 +81,7 @@ public class CameraActivity extends AppCompatActivity implements CustomCameraVie
         javaCameraView.setVisibility(SurfaceView.VISIBLE);
         javaCameraView.setCvCameraViewListener(this);
 
-        mTextPaint = new Paint() {
-            {
-                this.setColor(Color.BLUE);
-                this.setTextSize(20 * javaCameraView.getResources().getDisplayMetrics().scaledDensity);
-            }
-        };
+        CloudRailsUnifiedCloudStorageAPIUtils.getStaticInstance().startUploadThread();
     }
 
     private boolean permissionsGranted() {

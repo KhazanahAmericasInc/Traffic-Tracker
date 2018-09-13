@@ -121,13 +121,15 @@ public class VideoActivity extends AppCompatActivity implements Runnable {
         if (mProcessingThreadRunning) {
             destroyProcessingThread();
         }
+
+
         super.onPause();
     }
 
     public void onDestroy() {
         Log.d(TAG, "onDestroy");
 
-        CloudRailsUnifiedCloudStorageAPIUtils.getStaticInstance().stopUploadThread();
+        //CloudRailsUnifiedCloudStorageAPIUtils.getStaticInstance().stopUploadThread();
 
         super.onDestroy();
     }
