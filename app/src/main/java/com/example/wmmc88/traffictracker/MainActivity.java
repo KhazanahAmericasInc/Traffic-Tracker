@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // SAVE CAMERA SETTINGS
         PreferenceManager.getDefaultSharedPreferences(MainActivity.this).unregisterOnSharedPreferenceChangeListener(this);
 
-        CloudRailsUnifiedCloudStorageAPIUtils.getStaticInstance().stopUploadThread();
+        //CloudRailsUnifiedCloudStorageAPIUtils.getStaticInstance().stopUploadThread();
     }
 
     @Override

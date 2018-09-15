@@ -190,6 +190,7 @@ public class CameraActivity extends AppCompatActivity implements CustomCameraVie
 
     public void onCameraViewStopped() {
         Log.d(TAG, "onCameraViewStopped");
+
         mRgb.release();
     }
 

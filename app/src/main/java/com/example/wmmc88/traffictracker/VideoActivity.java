@@ -187,6 +187,9 @@ public class VideoActivity extends AppCompatActivity implements Runnable {
             }
         }
 
+        // start location listener on time interval
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1,
+                0, locationListener);
 
         Mat inputFrame = new Mat();
         Mat previewMat = null;
@@ -203,9 +206,7 @@ public class VideoActivity extends AppCompatActivity implements Runnable {
             mKCFTrackerCountingSolution.setCurrLoc(lastKnownLocation);
             CloudRailsUnifiedCloudStorageAPIUtils.getStaticInstance().setLoc(lastKnownLocation);
 
-            // start location listener on time interval
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0,
-                    0, locationListener);
+
             mKCFTrackerCountingSolution.process(inputFrame);
 
             previewMat = mKCFTrackerCountingSolution.getPreviewMat(true);
