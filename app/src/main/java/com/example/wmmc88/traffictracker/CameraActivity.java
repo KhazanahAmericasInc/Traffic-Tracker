@@ -1,6 +1,7 @@
 package com.example.wmmc88.traffictracker;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Canvas;
@@ -27,6 +28,8 @@ import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
+
+import static java.security.AccessController.getContext;
 
 public class CameraActivity extends AppCompatActivity implements CustomCameraView.CvCameraViewListener2 {
     public static final int CAMERA_PERMISSION_REQUEST = 1;
@@ -73,7 +76,11 @@ public class CameraActivity extends AppCompatActivity implements CustomCameraVie
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(TAG, "onCreate");
+
         super.onCreate(savedInstanceState);
+
+
+
         setContentView(R.layout.cam_activity);
 
         // Initialize java camera view (opencv), respective layouts and set configs
