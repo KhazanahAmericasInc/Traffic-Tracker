@@ -91,9 +91,11 @@ public class VideoSurfaceView extends SurfaceView implements SurfaceHolder.Callb
 
                         synchronized (getHolder()) {
                             canvas.drawBitmap(nextFrame, 0, 0, null);
+/*
                             canvas.drawText(fps, canvas.getWidth() - 450, canvas.getHeight() - 30, mTextPaint);
                             canvas.drawText("Zone 1:" + mZone1Count + "      Zone2: " + mZone2Count + "      Active Trackers: " + mActiveTrackersCount, 30, nextFrame.getHeight() - 30, mTextPaint);
                             canvas.drawText(mCurrentLocation.substring(0,34) + "]", canvas.getWidth() / 3,canvas.getHeight() / 4* 3,mTextPaint);
+*/
 
                             Log.v(TAG, "new frame displayed");
                             mDisplayedFrameCount.incrementAndGet();

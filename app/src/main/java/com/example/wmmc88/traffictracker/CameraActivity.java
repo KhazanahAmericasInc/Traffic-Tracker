@@ -1,14 +1,23 @@
 package com.example.wmmc88.traffictracker;
 
 import android.Manifest;
+import android.app.Activity;
+import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Surface;
+import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.widget.Toast;
 
@@ -19,6 +28,8 @@ import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
+
+import static java.security.AccessController.getContext;
 
 public class CameraActivity extends AppCompatActivity implements CustomCameraView.CvCameraViewListener2 {
     public static final int CAMERA_PERMISSION_REQUEST = 1;
@@ -40,19 +51,6 @@ public class CameraActivity extends AppCompatActivity implements CustomCameraVie
         }
     };
 
-    /*
-    static {
-        if (!OpenCVLoader.initDebug()) {
-            Log.e(TAG, "ERROR. COULD NOT LOAD STATIC OPENCV LIBRARIES!!!");
-            //TODO Handler to finish activty
-        } else {
-            Log.i(TAG, "Opencv loaded successfully.");
-//            Other OpenCV JNI libs should be here:
-//            System.loadLibrary("my_jni_lib1");
-//            System.loadLibrary("my_jni_lib2");
-        }
-    }*/
-
     private CameraBridgeViewBase mOpenCvCameraView;
     private Mat mRgb;
     private int mScreenWidth;
@@ -61,60 +59,44 @@ public class CameraActivity extends AppCompatActivity implements CustomCameraVie
     private int mPreviewFrameHeight;
     private String currLoc;
 
+
+    // Location Services
+    private LocationManager locationManager;
+    private LocationListener locationListener;
+    private String locationProvider;
+
+
     private KCFTrackerCountingSolution mKCFTrackerCountingSolution;
 
     JavaCameraView javaCameraView;
 
+    // Temporary frame counter for location services
+    private int frames = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(TAG, "onCreate");
+
         super.onCreate(savedInstanceState);
-        Log.d(TAG, "ONCREATE*******************************");
+
+
+
         setContentView(R.layout.cam_activity);
+
+        // Initialize java camera view (opencv), respective layouts and set configs
         javaCameraView = (JavaCameraView) findViewById(R.id.java_camera_view);
         javaCameraView.setVisibility(SurfaceView.VISIBLE);
         javaCameraView.setCvCameraViewListener(this);
+        CloudRailsUnifiedCloudStorageAPIUtils.getStaticInstance().startUploadThread();
     }
 
     private boolean permissionsGranted() {
         Log.d(TAG, "checkPermissionsGranted");
-
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_REQUEST);
             return false;
         }
         return true;
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        Log.d(TAG, "onRequestPermissionsResult");
-
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case CAMERA_PERMISSION_REQUEST: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Log.i(TAG, "Camera Permissions Granted!");
-                    loadOpenCVView();
-                } else {
-                    Log.w(TAG, "Permissions Denied!");
-                    this.finish();
-                }
-                return;
-            }
-
-            //other permission request cases
-        }
-    }
-
-    private void loadOpenCVView() {
-        Log.d(TAG, "loadOpenCVView");
-
-        mOpenCvCameraView = findViewById(R.id.cbvb_camera);
-        mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
-        mOpenCvCameraView.setCvCameraViewListener(this);
-        mOpenCvCameraView.setMaxFrameSize(640, 480);
-        mOpenCvCameraView.enableView();
     }
 
 
@@ -144,7 +126,6 @@ public class CameraActivity extends AppCompatActivity implements CustomCameraVie
     @Override
     public void onDestroy() {
         Log.d(TAG, "onDestroy");
-
         super.onDestroy();
         if (mOpenCvCameraView != null)
             mOpenCvCameraView.disableView();
@@ -153,6 +134,11 @@ public class CameraActivity extends AppCompatActivity implements CustomCameraVie
     public void onCameraViewStarted(int width, int height) {
         Log.d(TAG, "onCameraViewStarted");
 
+        // Prepare Looper for Location Updates
+        if (Looper.myLooper() == null) {
+            Looper.prepare();
+        }
+
         Toast.makeText(this, width + "x" + height, Toast.LENGTH_LONG).show();
 
         android.graphics.Point size = new android.graphics.Point();
@@ -160,6 +146,51 @@ public class CameraActivity extends AppCompatActivity implements CustomCameraVie
         Size screenSize = new Size(size.x, size.y);
 
         mKCFTrackerCountingSolution = new KCFTrackerCountingSolution(screenSize);
+
+        // ANDROID LOCATION MANAGER //
+
+        // Initialize Location Manager
+        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
+        // Abstract implementation of Location Listener
+        locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(android.location.Location location) {
+                // Log location updates
+
+                Log.d(TAG, "LOCATION CHANGED: " + location.toString());
+                mKCFTrackerCountingSolution.setCurrLoc(location.toString());
+                currLoc = location.toString();
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {}
+
+            @Override
+            public void onProviderEnabled(String provider) {}
+
+            @Override
+            public void onProviderDisabled(String provider) {}
+        };
+
+        // Set location to GPS location instead of service provider (i.e.Google Play location).
+        locationProvider = LocationManager.GPS_PROVIDER;
+
+        // Check location permissions
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.ACCESS_COARSE_LOCATION)) {
+
+            } else {
+                // do request the permission
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 8);
+            }
+        }
+
+        // start location listener on time interval
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0,
+                0, locationListener);
 
         mRgb = null;
     }
@@ -171,15 +202,33 @@ public class CameraActivity extends AppCompatActivity implements CustomCameraVie
     }
 
 
+
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
         Log.v(TAG, "onCameraFrame");
-        //FIXME not loading properly
         mKCFTrackerCountingSolution.process(inputFrame.rgba());
         mRgb = mKCFTrackerCountingSolution.getPreviewMat(true);
-        return mRgb;
-    }
 
-    public void setCurrLoc(String location) {
-        currLoc = location;
+        if(frames % 5 == 0) {
+            // Check location permissions
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                        Manifest.permission.ACCESS_COARSE_LOCATION)) {
+                } else {
+                    // do request the permission
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 8);
+                }
+            }
+
+            String lastKnownLocation = locationManager.getLastKnownLocation(locationProvider).toString().substring(0,34) + "]";
+
+            mKCFTrackerCountingSolution.setCurrLoc(lastKnownLocation);
+            CloudRailsUnifiedCloudStorageAPIUtils.getStaticInstance().setLoc(lastKnownLocation);
+
+        }
+        frames++;
+
+
+        return mRgb;
     }
 }

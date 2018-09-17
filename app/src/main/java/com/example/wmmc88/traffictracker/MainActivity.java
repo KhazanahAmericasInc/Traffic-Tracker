@@ -66,6 +66,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         // SAVE CAMERA SETTINGS
         PreferenceManager.getDefaultSharedPreferences(MainActivity.this).unregisterOnSharedPreferenceChangeListener(this);
+
+        //CloudRailsUnifiedCloudStorageAPIUtils.getStaticInstance().stopUploadThread();
     }
 
     @Override
@@ -87,6 +89,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         break;
 
                     case CAMERA_LAUNCH:
+                        // CAMERA LAUNCH PERMISSIONS
+                        int MY_PERMISSIONS_REQUEST_CAMERA=0;
+                        // Here, this is the current activity
+                        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                            if (android.support.v4.app.ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)) {
+                            }
+                            else {
+                                android.support.v4.app.ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.CAMERA}, MY_PERMISSIONS_REQUEST_CAMERA );
+                            }
+                        }
+
                         Intent intentToStartCameraMode = new Intent(MainActivity.this, CameraActivity.class);
                         startActivity(intentToStartCameraMode);
                         break;

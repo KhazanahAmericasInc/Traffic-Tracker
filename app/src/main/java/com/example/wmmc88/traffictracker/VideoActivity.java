@@ -110,9 +110,9 @@ public class VideoActivity extends AppCompatActivity implements Runnable {
                 finish();
             }
         } else {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, EXTERNAL_STORAGE_PERMISSION_REQUEST);
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}
+            , EXTERNAL_STORAGE_PERMISSION_REQUEST);
         }
-
     }
 
     @Override
@@ -121,13 +121,15 @@ public class VideoActivity extends AppCompatActivity implements Runnable {
         if (mProcessingThreadRunning) {
             destroyProcessingThread();
         }
+
+
         super.onPause();
     }
 
     public void onDestroy() {
         Log.d(TAG, "onDestroy");
 
-        CloudRailsUnifiedCloudStorageAPIUtils.getStaticInstance().stopUploadThread();
+        //CloudRailsUnifiedCloudStorageAPIUtils.getStaticInstance().stopUploadThread();
 
         super.onDestroy();
     }
@@ -175,19 +177,19 @@ public class VideoActivity extends AppCompatActivity implements Runnable {
         locationProvider = LocationManager.GPS_PROVIDER;
 
         // Check location permissions
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED ) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                     Manifest.permission.ACCESS_COARSE_LOCATION)) {
-                //showRationale();
             } else {
                 // do request the permission
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 8);
             }
         }
 
-
-
-
+        // start location listener on time interval
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1,
+                0, locationListener);
 
         Mat inputFrame = new Mat();
         Mat previewMat = null;
@@ -198,14 +200,13 @@ public class VideoActivity extends AppCompatActivity implements Runnable {
             Imgproc.cvtColor(inputFrame, inputFrame, Imgproc.COLOR_RGB2BGR);
 
             String locationProvider = LocationManager.GPS_PROVIDER;
-            // Or use LocationManager.GPS_PROVIDER
 
-            String lastKnownLocation = locationManager.getLastKnownLocation(locationProvider).toString();
+            String lastKnownLocation = locationManager.getLastKnownLocation(locationProvider).toString().substring(0,34) + "]";
             Log.d(TAG, "LOCATION IS NOW: " + lastKnownLocation);
+            mKCFTrackerCountingSolution.setCurrLoc(lastKnownLocation);
+            CloudRailsUnifiedCloudStorageAPIUtils.getStaticInstance().setLoc(lastKnownLocation);
 
-            // start location listener on time interval
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0,
-                    0, locationListener);
+
             mKCFTrackerCountingSolution.process(inputFrame);
 
             previewMat = mKCFTrackerCountingSolution.getPreviewMat(true);
@@ -225,7 +226,9 @@ public class VideoActivity extends AppCompatActivity implements Runnable {
             mVideoSurfaceView.mCurrentLocation = lastKnownLocation;
 
             mVideoSurfaceView.mReceivedFrameCount.incrementAndGet();
-            Log.v(TAG, "Zone1: " + mKCFTrackerCountingSolution.mZone1Count + "\tZone2: " + mKCFTrackerCountingSolution.mZone2Count + "\tCurrent Trackers: " + mKCFTrackerCountingSolution.getNumActiveTrackers());
+            Log.v(TAG, "Zone1: " + mKCFTrackerCountingSolution.mZone1Count + "\tZone2: "
+                    + mKCFTrackerCountingSolution.mZone2Count + "\tCurrent Trackers: "
+                    + mKCFTrackerCountingSolution.getNumActiveTrackers());
         }
         Log.i(TAG, "Processing Thread Finished");
         //TODO use handler finish activity from other thread

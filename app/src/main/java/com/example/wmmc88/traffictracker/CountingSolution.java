@@ -43,7 +43,7 @@ class CountingSolution {
     protected volatile List<MatOfPoint> rawContours = null;
     protected volatile List<Rect> filteredBoundingBoxes = null;
 
-    private String currLoc;
+    private String currLoc = "";
 
     protected CountingSolution(Size screenSize) {
         this.mBackgroundSubtractor = Video.createBackgroundSubtractorMOG2(500, 16, false);
@@ -159,11 +159,18 @@ class CountingSolution {
         String[] labelStrings = {"Source", "Raw Bg", "Cleaned Bg", "Contours", "Bounding Boxes"};
         for (int row = 0; row < NUM_ROWS; row++) {
             for (int col = 0; col < NUM_COLS && labelStrings.length > row * NUM_COLS + col; col++) {
-                Imgproc.putText(previewMat, labelStrings[row * NUM_COLS + col], new Point(col * previewFrameWidth + 20, row * previewFrameHeight + 100), FONT_HERSHEY_SIMPLEX
-                        , 2.5, new Scalar(0, 0, 255), 5, Core.FILLED);
+                Imgproc.putText(previewMat, labelStrings[row * NUM_COLS + col],
+                        new Point(col * previewFrameWidth + 20, row * previewFrameHeight + 100),
+                        FONT_HERSHEY_SIMPLEX, 2.5, new Scalar(0, 0, 255), 5, Core.FILLED);
             }
         }
-        
+
+        Imgproc.putText(previewMat, "Zone 1:"    + Integer.toString(mZone1Count)
+                                     + " Zone 2: "   + Integer.toString(mZone2Count) + " Location: " + currLoc,
+                new Point(30, SCREEN_SIZE.height - 30)
+               ,FONT_HERSHEY_SIMPLEX, 1.5, new Scalar(0,0,255),5, Core.FILLED);
+
+
 
         return previewMat;
     }
