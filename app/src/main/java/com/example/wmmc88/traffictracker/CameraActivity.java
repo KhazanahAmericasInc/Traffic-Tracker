@@ -207,8 +207,7 @@ public class CameraActivity extends AppCompatActivity implements CustomCameraVie
         Log.v(TAG, "onCameraFrame");
         mKCFTrackerCountingSolution.process(inputFrame.rgba());
         mRgb = mKCFTrackerCountingSolution.getPreviewMat(true);
-
-        if(frames % 5 == 0) {
+        if(frames % 60 == 0) {
             // Check location permissions
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                     != PackageManager.PERMISSION_GRANTED) {

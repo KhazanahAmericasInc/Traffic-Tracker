@@ -200,8 +200,13 @@ public class VideoActivity extends AppCompatActivity implements Runnable {
             Imgproc.cvtColor(inputFrame, inputFrame, Imgproc.COLOR_RGB2BGR);
 
             String locationProvider = LocationManager.GPS_PROVIDER;
+            String lastKnownLocation = "";
+            try {
+                lastKnownLocation = locationManager.getLastKnownLocation(locationProvider).toString().substring(0, 34) + "]";
 
-            String lastKnownLocation = locationManager.getLastKnownLocation(locationProvider).toString().substring(0,34) + "]";
+            }catch(Exception e){
+                Log.d(TAG,"Location Error: " + e);
+            }
             Log.d(TAG, "LOCATION IS NOW: " + lastKnownLocation);
             mKCFTrackerCountingSolution.setCurrLoc(lastKnownLocation);
             CloudRailsUnifiedCloudStorageAPIUtils.getStaticInstance().setLoc(lastKnownLocation);

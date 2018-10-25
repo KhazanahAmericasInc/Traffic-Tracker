@@ -62,6 +62,7 @@ class CountingSolution {
         } else {
             //TODO output error Invalid image
         }
+        Imgproc.resize(returnImg,returnImg,new Size(480,360));
         return returnImg;
     }
 
